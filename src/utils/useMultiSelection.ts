@@ -1,44 +1,36 @@
-import { MutableRefObject } from 'react'
-import Konva from 'konva'
+import { MutableRefObject } from 'react';
+import Konva from 'konva';
 
-import useEventListener from './useEventListener'
+import useEventListener from './useEventListener';
 
 interface Props {
-  stage: Konva.Stage | null
-  isSelectionActiveRef: MutableRefObject<boolean>
+  stage: Konva.Stage | null;
+  isSelectionActiveRef: MutableRefObject<boolean>;
 }
+
 export default function useMultiSelection({
   stage,
   isSelectionActiveRef,
 }: Props) {
-  useEventListener<HTMLDivElement, KeyboardEvent>(
-    'keydown',
-    (event: KeyboardEvent) => {
-      event.stopPropagation()
-      if (
-        event.ctrlKey ||
-        event.altKey ||
-        event.key === 'Control' ||
-        event.key === 'Alt'
-      ) {
-        stage?.draggable(false)
-        isSelectionActiveRef.current = true
+  useEventListener<HTMLDivElement, MouseEvent>(
+    'mousedown',
+    (event: MouseEvent) => {
+      event.stopPropagation();
+      if (event.button === 0) { // Left mouse button
+        stage?.draggable(false);
+        isSelectionActiveRef.current = true;
       }
     },
-  )
-  useEventListener<HTMLDivElement, KeyboardEvent>(
-    'keyup',
-    (event: KeyboardEvent) => {
-      event.stopPropagation()
-      if (
-        event.ctrlKey ||
-        event.altKey ||
-        event.key === 'Control' ||
-        event.key === 'Alt'
-      ) {
-        stage?.draggable(true)
-        isSelectionActiveRef.current = false
+  );
+
+  useEventListener<HTMLDivElement, MouseEvent>(
+    'mouseup',
+    (event: MouseEvent) => {
+      event.stopPropagation();
+      if (event.button === 0) { // Left mouse button
+        stage?.draggable(true);
+        isSelectionActiveRef.current = false;
       }
     },
-  )
+  );
 }
